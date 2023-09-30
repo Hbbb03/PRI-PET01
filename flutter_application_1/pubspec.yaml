@@ -1,0 +1,44 @@
+name: flutter_application_1
+description: A new Flutter project
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+
+  qr_flutter: ^4.1.0 
+  flutter:
+    sdk: flutter
+
+  
+
+  # Aquí puedes agregar otras dependencias de tu proyecto si las tienes
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # El "flutter_lints" package se mantiene aquí si lo necesitas
+
+flutter:
+  assets:
+    - assets/bot3.PNG
+    - assets/logoPrincipal.png
+    - assets/menu1.png
+    - assets/imagen2.jpeg
+    - assets/imagen3.jpeg
+    - assets/imagen4.jpeg
+    - assets/usu.jpeg
+    - assets/car3.jpeg
+    - assets/car4.jpeg
+    - assets/car1.jpg
+    - assets/car2.jpg
+    - assets/Botella2.png
+  uses-material-design: true
+
+  # Aquí puedes agregar configuraciones adicionales de Flutter si es necesario
+
+
+
