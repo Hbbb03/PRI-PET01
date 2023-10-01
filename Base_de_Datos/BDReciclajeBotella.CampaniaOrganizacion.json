@@ -1,0 +1,11 @@
+[{
+  "_id": {
+    "$oid": "6518f13349044d10c25db16d"
+  },
+  "id_CampaniaOrganizacion": 1,
+  "campaniaCampaniaOrganizacion": 1,
+  "organizacionCampaniaOrganizacion": 1,
+  "fechaRegistroCampaniaOrganizacion": "2023-09-30T12:00:00Z",
+  "estadoCampaniaOrganizacion": 1,
+  "fechaModificacionCampaniaOrganizacion": "2023-09-30T12:00:00Z"
+}]

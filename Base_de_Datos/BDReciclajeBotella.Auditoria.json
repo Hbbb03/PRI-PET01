@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "6518f08a49044d10c25db167"
+  },
+  "id_Auditoria": 1,
+  "accionAuditoria": "Acción de auditoría",
+  "tablaAuditoria": "Tabla afectada",
+  "descripcionAuditoria": "Descripción de la acción",
+  "fechaRegistroAuditoria": "2023-09-30T12:00:00Z",
+  "fechaModificacionAuditoria": "2023-09-30T12:00:00Z",
+  "estadoAuditoria": 1
+}]

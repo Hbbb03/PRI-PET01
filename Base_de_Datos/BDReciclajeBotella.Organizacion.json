@@ -1,0 +1,11 @@
+[{
+  "_id": {
+    "$oid": "6518f1f549044d10c25db176"
+  },
+  "id_Organizacion": 1,
+  "nombreOrganizacion": "Nombre de la organización",
+  "descripcionOrganizacion": "Descripción de la organización",
+  "estadoOrganizacion": 1,
+  "fechaRegistroOrganizacion": "2023-09-30T12:00:00Z",
+  "fechaModificacionOrganizacion": "2023-09-30T12:00:00Z"
+}]

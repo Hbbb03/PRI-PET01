@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "6518f17b49044d10c25db170"
+  },
+  "id_Contenedor": 1,
+  "codigoUsuario": 1,
+  "gramosContenedor": 100.5,
+  "fechaRegistroContenedor": "2023-09-30T12:00:00Z",
+  "estadoContenedor": 1,
+  "fechaModificacionContenedor": "2023-09-30T12:00:00Z",
+  "id_MaquinaContenedor": 1
+}]

@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "6518f0e649044d10c25db16a"
+  },
+  "id_Campania": 1,
+  "nombreCampania": "Campaña de ejemplo",
+  "descripcionCampania": "Descripción de la campaña",
+  "fechaInicioCampania": "2023-09-30T12:00:00Z",
+  "fechaFinCampania": "2023-10-15T12:00:00Z",
+  "estadoCampania": 1,
+  "sedeCampania": "Sede de la campaña",
+  "fechaRegistroCampania": "2023-09-30T12:00:00Z",
+  "fechaModificacionCampania": "2023-09-30T12:00:00Z"
+}]

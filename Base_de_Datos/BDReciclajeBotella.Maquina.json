@@ -1,0 +1,10 @@
+[{
+  "_id": {
+    "$oid": "6518f1b049044d10c25db173"
+  },
+  "id_Maquina": 1,
+  "descripcionMaquina": "Descripción de la máquina",
+  "estadoMaquina": 1,
+  "fechaModificacionMaquina": "2023-09-30T12:00:00Z",
+  "fechaRegistroMaquina": "2023-09-30T12:00:00Z"
+}]

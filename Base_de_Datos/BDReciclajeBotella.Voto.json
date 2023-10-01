@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "6518f22e49044d10c25db179"
+  },
+  "id_Voto": 1,
+  "codigoUsuario": 1,
+  "campaniaVoto": 1,
+  "organizacionVoto": 1,
+  "fechaRegistroVoto": "2023-09-30T12:00:00Z",
+  "donacionVoto": 50.75,
+  "estadoVoto": 1,
+  "fechaModificacionVoto": "2023-09-30T12:00:00Z"
+}]

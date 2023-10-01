@@ -1,0 +1,15 @@
+[{
+  "_id": {
+    "$oid": "6518ef6f49044d10c25db161"
+  },
+  "id_Usuario": 1,
+  "nombre": "John",
+  "apellidos": "Aguilar Perez",
+  "email": "johnaguilarperez@gmail.com",
+  "numeroCelular": 36743850,
+  "contraseña": "john123",
+  "rol": "usuarioFinal",
+  "estado": 1,
+  "fechaRegistro": "2023-09-30T12:00:00Z",
+  "fechaActualizacion": "2023-09-30T12:00:00Z"
+}]
