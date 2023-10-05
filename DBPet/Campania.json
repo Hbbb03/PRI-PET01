@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "651e43f361344385f4665b60"
+  },
+  "nombre": "Aldea sos",
+  "descripcion": "Casa de adopcion",
+  "fechaInicio": "2023-09-28T16:30:00Z",
+  "fechaFin": "2023-09-28T16:30:00Z",
+  "estado": 1,
+  "fechaRegistro": "2023-09-28T16:30:00Z",
+  "fechaActualizacion": "2023-09-28T16:30:00Z"
+}]

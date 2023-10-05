@@ -1,0 +1,10 @@
+[{
+  "_id": {
+    "$oid": "651e451161344385f4665b73"
+  },
+  "estado": 1,
+  "fechaRegistro": "2023-09-28T16:30:00Z",
+  "fechaActualizacion": "2023-09-28T16:30:00Z",
+  "id_Campania": "",
+  "id_Organizacion": ""
+}]

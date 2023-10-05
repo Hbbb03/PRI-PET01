@@ -1,0 +1,10 @@
+[{
+  "_id": {
+    "$oid": "651e459861344385f4665b76"
+  },
+  "nombre": "Unidos por los niños",
+  "descriptio": "Organizacion Publica",
+  "estado": 1,
+  "fechaRegistro": "2023-09-28T16:30:00Z",
+  "fechaActualizacion": "2023-09-28T16:30:00Z"
+}]

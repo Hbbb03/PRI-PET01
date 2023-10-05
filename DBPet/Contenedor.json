@@ -1,0 +1,20 @@
+[{
+  "_id": {
+    "$oid": "651e40cb61344385f4665b57"
+  },
+  "gramosContenedor": 0.1,
+  "estado": 1,
+  "fechaRegistro": "2023-09-28T16:30:00Z",
+  "fechaActualizacion": "2023-09-28T16:30:00Z",
+  "id_Usuario": {
+    "nombres": "Pedro",
+    "apellidos": "Aguilar Perez",
+    "email": "pedroap@gmail.com",
+    "numeroCelular": 45829382,
+    "contraseña": "pedro123",
+    "rol": "administrador",
+    "estado": 1,
+    "fechaRegistro": "2023-09-28T16:30:00Z",
+    "fechaActualizacion": "2023-09-28T16:30:00Z"
+  }
+}]
