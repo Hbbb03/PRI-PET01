@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/src/pages/login_page.dart';
 import 'package:flutter_application_1/src/pages/RegistroPuntosPage.dart';
-
-void main() => runApp(MyApp());
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -279,12 +279,37 @@ class QrCodePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlobalScaffold(
-      body: Center(
-        child: Text('Contenido de la página de Código QR'),
+      body: FutureBuilder<String?>(
+        future: SharedPreferences.getInstance().then((prefs) => prefs.getString('user_qr_code')),
+        builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Muestra un indicador de carga mientras se obtiene el valor
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // Manejar el error aquí si es necesario
+            print('Error al obtener los datos de SharedPreferences: ${snapshot.error}');
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            // Manejar el caso en que el valor sea null o no esté disponible
+             print('No se encontró un código QR guardado.');
+            return Center(child: Text('No se encontró un código QR guardado.'));
+          } else {
+             print('Código QR recuperado correctamente: ${snapshot.data}');
+            // El valor se obtuvo correctamente, puedes usarlo aquí
+            return Center(
+              child: QrImageView(
+                data: snapshot.data!,
+                version: QrVersions.auto,
+                size: 200.0,
+              ),
+            );
+          }
+        },
       ),
     );
   }
 }
+
 
 class CampanasPage extends StatelessWidget {
   @override
