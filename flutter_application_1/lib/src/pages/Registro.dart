@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_application_1/src/pages/menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_application_1/MongoDBModel.dart';
+import 'package:flutter_application_1/dbHelper/mongodb.dart';
 
 class Registro extends StatefulWidget {
   const Registro({Key? key}) : super(key: key);
@@ -11,17 +14,15 @@ class Registro extends StatefulWidget {
 
 class _RegistroState extends State<Registro> {
   final TextEditingController nombreController = TextEditingController();
-  final TextEditingController apellidoController = TextEditingController();
   final TextEditingController correoController = TextEditingController();
   final TextEditingController celularController = TextEditingController();
   final TextEditingController contrasenaController = TextEditingController();
   final TextEditingController confirmarContrasenaController =
       TextEditingController();
 
-  void _registrarUsuario() {
+  void _registrarUsuario() async {
     // Validar campos vacíos
     if (nombreController.text.isEmpty ||
-        apellidoController.text.isEmpty ||
         correoController.text.isEmpty ||
         celularController.text.isEmpty ||
         contrasenaController.text.isEmpty ||
@@ -36,11 +37,57 @@ class _RegistroState extends State<Registro> {
       return;
     }
 
-    // Agregar aquí tu lógica de registro
-    // Por ejemplo, puedes enviar los datos a una API o guardarlos localmente
+    // Llama a la función para registrar al usuario
+    _insertData(
+        nombreController.text, correoController.text, int.tryParse(celularController.text) ?? 0);
+  }
 
-    // Una vez registrado, puedes navegar a otra pantalla
-    // Navigator.of(context).pushReplacementNamed('/inicio');
+  Future<void> _insertData(String nombres, String email, int numeroCelular) async {
+    // Validar que los campos no estén vacíos
+    if (nombres.isEmpty || email.isEmpty) {
+      mostrarError('Por favor, complete todos los campos.');
+      return;
+    }
+
+    // Crear un objeto MongoDbModel con los datos del formulario
+  MongoDbModel userData = MongoDbModel(
+  nombres: nombreController.text,
+  email: correoController.text,
+  numeroCelular: int.parse(celularController.text),
+  contrasena: contrasenaController.text,
+  rol: 'user',  // Rol como 'user' como se especificó
+  estado: 1,     // Estado como 1 como se especificó
+  fechaRegistro: DateTime.now(),         // Fecha de registro actual
+  fechaActualizacion: DateTime.now(),     // Fecha de actualización actual
+);
+
+
+      // Añade otros campos de acuerdo a tu modelo si es necesario
+    
+
+    // Conectar a MongoDB Atlas y realizar la inserción de datos
+    await MongoDatabase.connect();
+    String result = await MongoDatabase.insert(userData);
+
+    if (result == "Data Inserted") {
+      // Datos insertados exitosamente
+      // Puedes realizar acciones adicionales aquí si es necesario
+      // Por ejemplo, mostrar un mensaje de éxito
+      mostrarMensaje('Usuario registrado exitosamente.');
+
+      // Guardar datos en SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('user_qr_code', userData.toJson().toString());
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => QRPage(data: userData.toJson().toString()),
+          ),
+        );
+    } else {
+      // Manejar el error, como mostrar un mensaje de error
+      mostrarError('Error al registrar usuario: $result');
+    }
   }
 
   void mostrarError(String mensaje) {
@@ -49,6 +96,26 @@ class _RegistroState extends State<Registro> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Error'),
+          content: Text(mensaje),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void mostrarMensaje(String mensaje) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Mensaje'),
           content: Text(mensaje),
           actions: <Widget>[
             TextButton(
@@ -107,13 +174,8 @@ class _RegistroState extends State<Registro> {
               ElevatedButton(
                 onPressed: () {
                   if (_validateInput()) {
-                    _registrarUsuario(); // Llama a la función para registrar al usuario
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => QRPage(data: _collectUserData()),
-                      ),
-                    );
+                    _registrarUsuario();
+                    print("recibido");
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -145,15 +207,6 @@ class _RegistroState extends State<Registro> {
     }
     return true;
   }
-
-  String _collectUserData() {
-    return '''
-      Nombre: ${nombreController.text} 
-      Email: ${correoController.text}
-      Celular: ${celularController.text}
-      Contraseña: ${contrasenaController.text} 
-    ''';
-  }
 }
 
 class QRPage extends StatelessWidget {
@@ -174,7 +227,7 @@ class QRPage extends StatelessWidget {
               version: QrVersions.auto,
               size: 200.0,
             ),
-            SizedBox(height: 20.0), // Espacio vertical entre el QR y el botón
+            SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
