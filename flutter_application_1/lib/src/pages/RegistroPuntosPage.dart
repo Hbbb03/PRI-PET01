@@ -1,62 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/src/pages/menu.dart';
+import 'package:flutter_application_1/MongoDBModel.dart';
+import 'package:flutter_application_1/dbHelper/mongodb.dart';
 
-class RegistroPuntosPage extends StatelessWidget {
+class RegistroPuntosPage extends StatefulWidget {
+  final String username;
+
+ RegistroPuntosPage({this.username = "", Key? key}) : super(key: key);
+
+  @override
+  _RegistroPuntosPageState createState() => _RegistroPuntosPageState();
+}
+
+class _RegistroPuntosPageState extends State<RegistroPuntosPage> {
+  List<MongoDbModel> userRecords = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      // Conecta a la base de datos de MongoDB Atlas
+      await MongoDatabase.connect();
+
+      // Obtén los registros del usuario actual
+      List<MongoDbModel> records =
+          await MongoDatabase.getUserRecords(widget.username);
+
+      setState(() {
+        userRecords = records;
+      });
+    } catch (e) {
+      print('Error al cargar datos desde MongoDB: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GlobalScaffold(
-      body: Stack(
-        children: [
-          // Imagen de fondo con opacidad
-          Opacity(
-            opacity: 0.3, // Reduzco la opacidad para reducir el zoom
-            child: Image.asset(
-              'assets/Botella2.png', // Reemplaza con la ruta de tu imagen de fondo
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.contain, // Cambio a BoxFit.contain
-            ),
-          ),
-          Center(
-            child: Container(
-              padding: EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8), // Opacidad del fondo
-                borderRadius: BorderRadius.circular(10.0),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Registro de Puntos'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Registros de Puntos para ${widget.username}',
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start, // Alineo el texto en la parte superior
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 50.0), // Espacio en blanco en la parte superior
-                  Text(
-                    'Puntos Acumulados',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  DataTable(
-                    columns: [
-                      DataColumn(label: Text('Peso (g)')),
-                      DataColumn(label: Text('Puntos')),
-                      DataColumn(label: Text('Fecha')),
-                    ],
-                    rows: [
-                      DataRow(cells: [
-                        DataCell(Text('1000')),
-                        DataCell(Text('50')),
-                        DataCell(Text('2023-09-19')),
-                      ]),
-                      // Agregar más filas para otros datos aquí
-                    ],
-                  ),
+            ),
+            SizedBox(height: 20.0),
+            if (userRecords.isNotEmpty)
+              DataTable(
+                columns: [
+                  DataColumn(label: Text('Peso (g)')),
+                  DataColumn(label: Text('Puntos')),
+                  DataColumn(label: Text('Fecha')),
                 ],
+                rows: userRecords
+                    .map((record) => DataRow(
+                          cells: [
+                            DataCell(Text(record.peso.toString())),
+                            DataCell(Text(record.puntos.toString())),
+                            DataCell(Text(record.fecha.toLocal().toString())),
+                          ],
+                        ))
+                    .toList(),
               ),
-            ),
-          ),
-        ],
+            if (userRecords.isEmpty)
+              Text('No se encontraron registros de puntos para ${widget.username}'),
+          ],
+        ),
       ),
     );
   }

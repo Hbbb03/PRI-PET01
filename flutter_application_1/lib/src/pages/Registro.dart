@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_application_1/src/pages/menu.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/MongoDBModel.dart';
 import 'package:flutter_application_1/dbHelper/mongodb.dart';
+import 'dart:convert';
+import 'dart:math';
 
 class Registro extends StatefulWidget {
   const Registro({Key? key}) : super(key: key);
@@ -17,8 +19,13 @@ class _RegistroState extends State<Registro> {
   final TextEditingController correoController = TextEditingController();
   final TextEditingController celularController = TextEditingController();
   final TextEditingController contrasenaController = TextEditingController();
-  final TextEditingController confirmarContrasenaController =
-      TextEditingController();
+  final TextEditingController confirmarContrasenaController = TextEditingController();
+
+  Future<String> obtenerNombreDeUsuario() async {
+    final prefs = await SharedPreferences.getInstance();
+    final username = prefs.getString('username') ?? "Usuario de Prueba";
+    return username;
+  }
 
   void _registrarUsuario() async {
     // Validar campos vacíos
@@ -37,9 +44,41 @@ class _RegistroState extends State<Registro> {
       return;
     }
 
-    // Llama a la función para registrar al usuario
-    _insertData(
-        nombreController.text, correoController.text, int.tryParse(celularController.text) ?? 0);
+    // Obtener el nombre de usuario asincrónicamente
+    final username = await obtenerNombreDeUsuario();
+
+    await _insertData(
+      nombreController.text,
+      correoController.text,
+      int.tryParse(celularController.text) ?? 0,
+    );
+
+    // Crear un mapa con los datos del usuario
+    Map<String, dynamic> userDataMap = {
+      "nombres": nombreController.text,
+      "email": correoController.text,
+      "numeroCelular": int.tryParse(celularController.text) ?? 0,
+      "contrasena": contrasenaController.text,
+      "rol": "user",
+      "estado": 1,
+      "fechaRegistro": DateTime.now().toIso8601String(),
+      "fechaActualizacion": DateTime.now().toIso8601String(),
+    };
+
+    // Convierte el mapa en una cadena JSON
+    String userDataJson = jsonEncode(userDataMap);
+
+    // Llama a la función para mostrar el código QR con la cadena JSON
+    mostrarCodigoQR(userDataJson);
+  }
+
+  void mostrarCodigoQR(String jsonData) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QRPage(data: jsonData),
+      ),
+    );
   }
 
   Future<void> _insertData(String nombres, String email, int numeroCelular) async {
@@ -48,44 +87,47 @@ class _RegistroState extends State<Registro> {
       mostrarError('Por favor, complete todos los campos.');
       return;
     }
+    final random = Random();
+    final peso = random.nextInt(10000);
+    final puntos = random.nextInt(100);
+    final fecha = DateTime.now();
 
     // Crear un objeto MongoDbModel con los datos del formulario
-  MongoDbModel userData = MongoDbModel(
-  nombres: nombreController.text,
-  email: correoController.text,
-  numeroCelular: int.parse(celularController.text),
-  contrasena: contrasenaController.text,
-  rol: 'user',  // Rol como 'user' como se especificó
-  estado: 1,     // Estado como 1 como se especificó
-  fechaRegistro: DateTime.now(),         // Fecha de registro actual
-  fechaActualizacion: DateTime.now(),     // Fecha de actualización actual
-);
-
-
-      // Añade otros campos de acuerdo a tu modelo si es necesario
-    
+    MongoDbModel userData = MongoDbModel(
+      nombres: nombreController.text,
+      email: correoController.text,
+      numeroCelular: int.parse(celularController.text),
+      contrasena: contrasenaController.text,
+      rol: 'user',
+      estado: 1,
+      fechaRegistro: DateTime.now(),
+      fechaActualizacion: DateTime.now(),
+      peso: peso,
+      puntos: puntos,
+      fecha: fecha,
+    );
 
     // Conectar a MongoDB Atlas y realizar la inserción de datos
     await MongoDatabase.connect();
     String result = await MongoDatabase.insert(userData);
 
     if (result == "Data Inserted") {
-      // Datos insertados exitosamente
-      // Puedes realizar acciones adicionales aquí si es necesario
-      // Por ejemplo, mostrar un mensaje de éxito
       mostrarMensaje('Usuario registrado exitosamente.');
 
       // Guardar datos en SharedPreferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('user_qr_code', userData.toJson().toString());
+      prefs.setString('username', nombreController.text);
+
+      // Mostrar el código QR al usuario
       Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => QRPage(data: userData.toJson().toString()),
-          ),
-        );
+        context,
+        MaterialPageRoute(
+          builder: (context) => QRPage(data: userData.toJson().toString()),
+        ),
+      );
+      prefs = await SharedPreferences.getInstance();
+      prefs.setString('user_qr_code', userData.toJson().toString());
     } else {
-      // Manejar el error, como mostrar un mensaje de error
       mostrarError('Error al registrar usuario: $result');
     }
   }
@@ -143,8 +185,7 @@ class _RegistroState extends State<Registro> {
             children: <Widget>[
               Image.asset(
                 'assets/logoPrincipal.png',
-                width:
-                    200, // Ajusta el tamaño de la imagen según tus necesidades
+                width: 200,
                 height: 200,
               ),
               TextFormField(
@@ -175,7 +216,6 @@ class _RegistroState extends State<Registro> {
                 onPressed: () {
                   if (_validateInput()) {
                     _registrarUsuario();
-                    print("recibido");
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -216,14 +256,16 @@ class QRPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // No es necesario formatear la cadena JSON
+    // simplemente pasa la cadena JSON como está
     return Scaffold(
-      appBar: AppBar(title: Text('Codigo QR')),
+      appBar: AppBar(title: Text('Código QR')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             QrImageView(
-              data: data,
+              data: data, // Utiliza la cadena JSON sin formatear
               version: QrVersions.auto,
               size: 200.0,
             ),
@@ -233,7 +275,7 @@ class QRPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MyHomePage()),
-                );
+                  );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromARGB(255, 151, 133, 230),

@@ -3,6 +3,7 @@ import 'package:flutter_application_1/src/pages/login_page.dart';
 import 'package:flutter_application_1/src/pages/RegistroPuntosPage.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class MyApp extends StatelessWidget {
   @override
@@ -13,12 +14,14 @@ class MyApp extends StatelessWidget {
         '/': (context) => MyHomePage(),
         LoginPage.id: (context) => LoginPage(),
         '/qr_code': (context) => QrCodePage(),
-        '/registro_puntos': (context) => RegistroPuntosPage(),
+       '/registro_puntos': (context) => RegistroPuntosPage(),
         '/campanas': (context) => CampanasPage(),
       },
     );
   }
 }
+
+
 
 class MyHomePage extends StatelessWidget {
   final List<String> carouselImages = [
@@ -291,14 +294,15 @@ class QrCodePage extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data == null) {
             // Manejar el caso en que el valor sea null o no esté disponible
-             print('No se encontró un código QR guardado.');
+            print('No se encontró un código QR guardado.');
             return Center(child: Text('No se encontró un código QR guardado.'));
           } else {
-             print('Código QR recuperado correctamente: ${snapshot.data}');
+            print('Código QR recuperado correctamente: ${snapshot.data}');
             // El valor se obtuvo correctamente, puedes usarlo aquí
+
             return Center(
               child: QrImageView(
-                data: snapshot.data!,
+                data: snapshot.data!, // Utiliza la cadena JSON sin formatear
                 version: QrVersions.auto,
                 size: 200.0,
               ),
@@ -426,11 +430,13 @@ class MiDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            TextButton(
-              onPressed: () {
+           TextButton(
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                final username = prefs.getString('username') ?? "Usuario de Prueba";
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => RegistroPuntosPage(),
+                    builder: (context) => RegistroPuntosPage(username: username),
                   ),
                 );
               },
